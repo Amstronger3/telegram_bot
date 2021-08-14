@@ -1,4 +1,3 @@
-import json
 import sqlite3
 from datetime import datetime, timedelta
 
@@ -48,13 +47,9 @@ class SQLighter:
         if last_time:
             return last_time
 
-    # dont`t forget change timedelta
     def is_update_currency_or_not(self, user_id):
         last_request_time = datetime.strptime(self.get_last_request_time(user_id), format("%Y-%m-%d %H:%M:%S.%f"))
-        return datetime.now() > (last_request_time + timedelta(seconds=10))
+        return datetime.now() > (last_request_time + timedelta(minutes=10))
 
     def close(self):
         self.connection.close()
-
-
-exist = SQLighter('users')

@@ -1,4 +1,3 @@
-import json
 import os
 from datetime import datetime, timedelta
 
@@ -11,28 +10,40 @@ import config
 
 def check_valid_currency_name(name):
     if len(name) != 3:
-        print(0)
         return "Length of name currency must be 3 symbols only!"
     elif not name.upper() in config.currency_list:
-        print(1)
-        return "Invalid name of currency! \nExample: USD, EUR, UAH"
+        return "Invalid name of currency! \nExample: UAH"
+
+
+def get_list_available_currency():
+    url = f'{config.base_url}latest'
+    response = requests.get(url)
+
+    list_currencies_from_response_json = list()
+
+    for key, value in response.json()["rates"].items():
+        list_currencies_from_response_json.append(f'{key}: {round(value, 2)}')
+    return list_currencies_from_response_json
 
 
 def make_request_to_convert(currency_to, amount=10, currency_from="USD"):
-    url_convert = f"https://v1.nocodeapi.com/aleksandr/cx/xLCfYxTcwgugBexS/rates/convert?amount={str(amount)}&from={currency_from}&to={currency_to}"
+    url_convert = f"{config.base_url}convert?from={currency_from}&to={currency_to}&amount={str(amount)}"
     response = requests.get(url_convert)
+
     return round(response.json()["result"], 2)
 
 
 def make_request_to_get_graph_for_7_day(base_currency_graph="USD", req_currency_graph="CAD"):
     start_date = datetime.date(datetime.now()) - timedelta(days=7)
     end_date = datetime.date(datetime.now())
-    url_history = f"{config.base_url}timeseries?start_date={str(start_date)}&end_date={str(end_date)}&base={base_currency_graph}&symbols={req_currency_graph}"
+    url_history = f"{config.base_url}timeseries?" \
+                  f"start_date={str(start_date)}&" \
+                  f"end_date={str(end_date)}&base={base_currency_graph}&symbols={req_currency_graph}"
     response = requests.get(url_history)
-    return response.json()["rates"]
+    return response.json()["rates"], req_currency_graph
 
 
-def get_graph_for_7_day(json_timeframe_currency):
+def get_graph_for_7_day(json_timeframe_currency, req_currency_graph):
     font = {'size': 7}
     matplotlib.rc('font', **font)
 
@@ -46,7 +57,10 @@ def get_graph_for_7_day(json_timeframe_currency):
 
     file_name = str(datetime.timestamp(datetime.now())).replace(".", "")
     plt.plot(date_list, point_list)
-    plt.savefig(f'graphs_img/{file_name}.png', dpi=100)
+    if not os.path.isdir('./graphs_img'):
+        os.mkdir('./graphs_img')
+    plt.gca().set(ylabel=req_currency_graph)
+    plt.savefig(f'./graphs_img/{file_name}.png', dpi=100)
     plt.clf()
     return file_name
 
@@ -54,11 +68,3 @@ def get_graph_for_7_day(json_timeframe_currency):
 def delete_graph_img_from_local_store(file_name):
     if os.path.exists(f'{config.base_dir}/graphs_img/{file_name}.png'):
         os.remove(f'{config.base_dir}/graphs_img/{file_name}.png')
-
-
-with open('response_from_api_all_rates.json', 'r') as json_rates:
-    dict_currencies_from_json = json.load(json_rates)['rates']
-    list_currencies_from_response_json = list()
-
-    for k, v in dict_currencies_from_json.items():
-        list_currencies_from_response_json.append(f'{k}: {round(v, 2)}')
