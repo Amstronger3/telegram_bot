@@ -9,7 +9,7 @@ import services
 
 bot = Bot(token=config.token)
 dp = Dispatcher(bot, storage=MemoryStorage())
-db = SQLighter('users')
+db = SQLighter('users.db')
 
 
 @dp.message_handler(commands=['start'])
