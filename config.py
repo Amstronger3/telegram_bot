@@ -1,6 +1,6 @@
 import os
 
-token = '1904762821:AAFsGMZ9LmvQafCFm4cbe1H6mwtP_Llmwvw'
+token = ''
 database_name = 'users'
 base_url = 'https://api.exchangerate.host/'
 base_dir = os.path.dirname(os.path.realpath(__file__))
