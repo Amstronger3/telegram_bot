@@ -15,7 +15,7 @@ db = SQLighter('users.db')
 @dp.message_handler(commands=['start'])
 async def greeting(message: types.Message):
     await message.answer(
-        "Hello, i`m Exchange currency bot!\n"
+        "Hello, I`m Exchange currency bot!\n"
         "I can convert and show history currency for the last 7 days.\n"
         "My commands: /list, /exchange and /history.\n"
         "If you want to stop anything operation - enter /cancel.\n"
@@ -69,7 +69,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 @dp.message_handler(commands=['exchange'])
 async def exchange_currency(message: types.Message):
     await Form.exchange_currency_from.set()
-    await message.answer('Please, enter what currency FROM do you want to change (example: UAH).')
+    await message.answer('Please, enter what currency FROM do you want to change (Example: UAH)?')
 
 
 @dp.message_handler(state=Form.exchange_currency_from)
@@ -91,7 +91,7 @@ async def process_amount(message: types.Message, state: FSMContext):
         async with state.proxy() as data:
             data['amount'] = message.text
         await Form.next()
-        await message.answer('Please, enter what currency TO do you want to change (example: UAH).')
+        await message.answer('Please, enter what currency TO do you want to change (Example: UAH)?')
 
 
 @dp.message_handler(state=Form.exchange_currency_to)
@@ -110,7 +110,7 @@ async def process_exchange(message: types.Message, state: FSMContext):
 @dp.message_handler(commands=['history'])
 async def history_currency_graph(message: types.Message):
     await Form.base_currency_graph.set()
-    await message.answer('Please, enter base currency for graph (example: UAH).')
+    await message.answer('Please, enter base currency for graph (Example: UAH).')
 
 
 @dp.message_handler(state=Form.base_currency_graph)
@@ -121,7 +121,7 @@ async def process_base_currency_graph(message: types.Message, state: FSMContext)
         async with state.proxy() as data:
             data['base_currency_graph'] = message.text
             await Form.next()
-            await message.answer('Please, enter required currency for graph (example: UAH).')
+            await message.answer('Please, enter required currency for graph (Example: UAH).')
 
 
 @dp.message_handler(state=Form.req_currency_graph)
